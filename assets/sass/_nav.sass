@@ -1,0 +1,151 @@
+%a
+	position: relative
+	margin-top: 4px
+	text-transform: capitalize
+	+ft(16, 16, 400)
+	transition: $trs
+	cursor: pointer
+	&::after 
+		content: ''
+		display: block
+		margin-top: 2px
+		+sz(0, 2px)
+		background: $main
+		transition: width .3s
+	&:hover
+		color: $main
+		&::after
+			width: 100%
+
+.header
+	padding-top: $gap2
+	padding-bottom: $gap2
+	.container
+		+flex(flex, center, space-between, nowrap)
+		gap: $gap2
+	&-menu
+		+flex(flex, center, space-between, nowrap)
+		gap: $gap4
+		a
+			@extend %a
+	&-btns
+		+flex(flex, center, space-between, nowrap)
+		gap: $gap2
+	&-toggler
+		+flex(flex, center, center, nowrap)
+		padding: 0
+		background: transparent
+		border: none
+		cursor: pointer
+	+miw($md)
+		&-toggler
+			display: none
+	+maw($md)
+		&-menu
+			display: none
+	+maw($sm)
+		.btn
+			display: none
+
+
+.drawer
+	+ps(fixed, (t, 0), (l, 0))
+	z-index: 100500
+	+sz(100%, 100%)
+	padding: $gap3
+	height: 0
+	visibility: hidden
+	transform: translateX(-100%)
+	transition: transform 0.3s linear
+	overflow: hidden
+	flex-direction: column
+	+theme(dark)
+	.btn
+		margin-top: auto
+	&-header
+		+flex(flex, center, space-between, nowrap)
+		padding-bottom: $gap3
+		.header-toggler
+			display: flex
+			filter: invert(1)
+	&-menu
+		display: flex
+		flex-direction: column
+		margin-bottom: $gap3
+		a
+			padding: $gap3 0
+			+flex(flex, center, space-between, nowrap)
+			+ft(22, 22, 400)
+			text-transform: uppercase
+			border: 1px solid $white
+			border-width: 0 0 1px
+			cursor: pointer
+			transition: $trs
+			&:last-child
+				border-bottom: 0
+			&:hover
+				color: $main
+			svg
+				color: $main
+	&.show
+		display: flex
+		visibility: visible
+		height: 100%
+		transform: translateX(0)
+
+	+miw(1400)
+		&.show
+			display: none
+
+
+
+
+.footer
+	padding: $gap4 0
+	+theme(main)
+	&-top
+		.container
+			display: flex
+			justify-content: space-between
+			grid-template-columns: 0.5fr 1fr
+			gap: $gap4
+			+maw($md)
+				flex-wrap: wrap
+				justify-content: center
+	&-btm
+		margin-top: $gap2
+		nav
+			display: flex
+			gap: $gap2
+			flex-wrap: wrap
+			a
+				@extend %a
+		+maw($md)
+			& *
+				justify-content: center
+
+	&-info
+		max-width: 400px
+	&-note
+		margin: $gap4 0
+	&-nav
+		display: flex
+		justify-content: flex-end
+		gap: var(--gapSection)
+		.divider
+			+sz(50px, 2px)
+			background-color: $white
+			margin: $gap1 0 $gap2
+		ul
+			padding: 0
+			list-style-type: none
+			li
+				display: block
+			a
+				@extend %a
+				display: inline-block
+
+.logo
+	text-transform: uppercase
+	text-align: center
+	+ft(20, 20, 700)

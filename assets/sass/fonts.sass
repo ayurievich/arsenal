@@ -1,0 +1,39 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Nokora:wght@100;300;400;700;900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap')
+	
+$fontSrc: '../fonts'
+
+// $fntName: (Montserrat-Black, 900), (Montserrat-Bold, 700), (Montserrat-Medium, 500), (Montserrat-Regular, 400), (Montserrat-Light, 300)
+
+	
+// @each $fnt, $fntw in $fntName
+// 	@font-face 
+// 		$fntFldr: 'Montserrat'
+// 		font-family: 'Montserrat'
+// 		font-style: normal
+// 		font-weight: #{$fntw}
+// 		font-display: swap
+// 		src: local('Montserrat'), local('Montserrat'), url($fontSrc + '/' + $fntFldr + '/' +'#{$fnt}.woff') format('woff'), url($fontSrc + '/' + $fntFldr + '/' +'#{$fnt}.woff2') format('woff2'), url($fontSrc + '/' + $fntFldr + '/' +'#{$fnt}.ttf') format('ttf')
+
+
+
+
+$fontFamilyMontserrat: 'Montserrat'
+
+
+$fntNameMontserrat: (Montserrat-Bold, 700), (Montserrat-SemiBold, 600), (Montserrat-Medium, 500), (Montserrat-Regular, 400), (Montserrat-Light, 300)
+
+
+=font($fntName, $fntSrc, $fontFamily)	
+	@each $fnt, $fntw in $fntName
+		@font-face 
+			$fntFldr: $fontFamily
+			font-family: $fontFamily
+			font-style: normal
+			font-weight: #{$fntw}
+			font-display: swap
+			src: local($fontFamily), local($fontFamily), url($fontSrc + '/' + $fntFldr + '/' +'#{$fnt}.woff') format('woff'), url($fontSrc + '/' + $fntFldr + '/' +'#{$fnt}.woff2') format('woff2'), url($fontSrc + '/' + $fntFldr + '/' +'#{$fnt}.ttf') format('ttf')
+
+
+//+font($fntNameMontserrat, $fontSrc, $fontFamilyMontserrat)
+
+	
