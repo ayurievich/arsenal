@@ -32,7 +32,7 @@ useHead({
   meta: [
     { name: "msapplication-TileColor", content: "#003770" },
     { name: "theme-color", content: "#003770" },
-    { name: 'yandex-verification', content: 'ebc6bc6cf4b40115' }
+    { name: 'yandex-verification', content: '75c81ffbf6bdaf5a' }
   ],
   script: [
     {
