@@ -38,7 +38,7 @@ const isFormValid = computed(() => {
 
 const formSend = async () => {
   try {
-    await $fetch( 'https://okna.arsenal.ru', {
+    await $fetch( 'https://okna-arsenal24.ru/bot.php', {
       method: 'POST',
       body: {
         ...form

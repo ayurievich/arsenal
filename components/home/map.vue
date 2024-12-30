@@ -2,7 +2,7 @@
   <section class="section">
     <hgroup class="text-center">
       <h2>
-        Наш офис
+        Наш цех
       </h2>
     </hgroup>
     <div id="map" style="width: 100%; height: 400px"></div>
@@ -36,7 +36,7 @@ onMounted(() => {
       const placemark = new ymaps.Placemark(
           [55.978684, 92.937534],
           {
-            hintContent: 'Наш магазин',
+            hintContent: 'Наш цех',
             balloonContent: 'Мы находимся здесь!',
           },
           {
