@@ -63,6 +63,7 @@ fi
 
 echo "==> Установка зависимостей и сборка..."
 npm install
+rm -rf .output .nuxt node_modules/.cache node_modules/.vite
 npm run build
 
 echo "==> Перезапуск приложения..."

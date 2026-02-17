@@ -15,14 +15,21 @@
     <div class="contact-form__field">
       <label for="tel">Телефон</label>
       <input
-        v-model="form.phone"
+        ref="phoneInputRef"
+        :value="phoneDisplay"
         type="tel"
         required
         name="tel"
         id="tel"
-        placeholder="+7 (999) 123-45-67"
-        class="contact-form__input"
+        placeholder="+7 (000) 000-00-00"
+        :class="['contact-form__input', { 'contact-form__input--error': phoneError }]"
+        maxlength="18"
+        autocomplete="tel"
+        inputmode="numeric"
+        @input="onPhoneInput"
+        @blur="validatePhone"
       />
+      <span v-if="phoneError" class="contact-form__error">{{ phoneError }}</span>
     </div>
     <div class="contact-form__field">
       <label for="message">Комментарий</label>
@@ -49,27 +56,85 @@
 </template>
 
 <script setup>
-import { reactive, ref, computed } from "vue";
+import { reactive, ref, computed, nextTick } from "vue";
+
+function formatRuPhone(digits) {
+  if (!digits) return "";
+  const d = digits.replace(/\D/g, "").replace(/^[78]/, "").slice(0, 10);
+  if (!d.length) return "";
+  let s = "+7 (";
+  if (d.length <= 3) return s + d;
+  s += d.slice(0, 3) + ") ";
+  if (d.length <= 6) return s + d.slice(3);
+  s += d.slice(3, 6) + "-";
+  if (d.length <= 8) return s + d.slice(6);
+  s += d.slice(6, 8) + "-";
+  return s + d.slice(8);
+}
 
 const form = reactive({
-  phone: '',
-  name: '',
-  message: '',
+  phone: "",
+  name: "",
+  message: "",
 });
 
-const alert = ref('');
+const alert = ref("");
+const phoneError = ref("");
+const phoneInputRef = ref(null);
+
+function isValidRussianPhone(value) {
+  const digits = value.replace(/\D/g, "");
+  if (digits.length === 10 && digits[0] === "9") return true;
+  if (digits.length === 11 && (digits[0] === "7" || digits[0] === "8") && digits[1] === "9") return true;
+  return false;
+}
+
+const phoneDisplay = computed(() => formatRuPhone(form.phone));
+
+function onPhoneInput(e) {
+  const raw = e.target.value;
+  const digits = raw.replace(/\D/g, "").replace(/^[78]/, "").slice(0, 10);
+  form.phone = digits;
+  if (!digits) {
+    phoneError.value = "";
+    return;
+  }
+  phoneError.value = isValidRussianPhone(digits) ? "" : "Введите корректный номер: +7 (000) 000-00-00";
+  nextTick(() => {
+    const el = phoneInputRef.value;
+    if (el) el.setSelectionRange(phoneDisplay.value.length, phoneDisplay.value.length);
+  });
+}
+
+function validatePhone() {
+  const v = form.phone.trim();
+  if (!v) {
+    phoneError.value = "";
+    return true;
+  }
+  if (!isValidRussianPhone(v)) {
+    phoneError.value = "Введите корректный номер: +7 (000) 000-00-00";
+    return false;
+  }
+  phoneError.value = "";
+  return true;
+}
 
 const isFormValid = computed(() => {
-  return form.name.trim() !== "" && form.phone.trim() !== "";
+  const nameOk = form.name.trim() !== "";
+  const phone = form.phone.trim();
+  const phoneOk = phone !== "" && isValidRussianPhone(phone);
+  return nameOk && phoneOk;
 });
 
 const formSend = async () => {
+  if (!validatePhone()) return;
   try {
-    await $fetch('https://okna-arsenal24.ru/bot.php', {
+    await $fetch('/bot.php', {
       method: 'POST',
       body: {
         name: form.name,
-        phone: form.phone,
+        phone: formatRuPhone(form.phone),
         message: form.message,
       },
     });
@@ -136,6 +201,22 @@ const formSend = async () => {
     border-color: #003770;
     background: #fff;
   }
+
+  &--error {
+    border-color: #dc2626;
+    background: #fef2f2;
+
+    &:focus {
+      border-color: #dc2626;
+    }
+  }
+}
+
+.contact-form__error {
+  display: block;
+  margin-top: 6px;
+  font-size: 0.8125rem;
+  color: #dc2626;
 }
 
 .contact-form__textarea {

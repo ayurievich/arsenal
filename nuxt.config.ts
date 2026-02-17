@@ -2,6 +2,7 @@
 export default defineNuxtConfig({
   devtools: { enabled: true },
   css: ["~/assets/sass/main.sass"],
+
   app: {
     head: {
       charset: "utf-8",
@@ -9,13 +10,18 @@ export default defineNuxtConfig({
       htmlAttrs: { lang: "ru" },
     },
   },
+
   image: {
     dir: "assets/img",
   },
+
   modules: ["@nuxt/image"],
+
   router: {
     options: {
       scrollBehaviorType: "smooth",
     },
   },
+
+  compatibilityDate: "2026-02-17",
 });
