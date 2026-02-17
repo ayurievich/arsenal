@@ -12,7 +12,7 @@
 <script setup>
 import { onMounted } from 'vue'
 
-const mapId = `ymap-${Math.random().toString(36).slice(2)}`
+const mapId = 'ymap-arsenal'
 
 const YANDEX_MAPS_BASE = 'https://api-maps.yandex.ru/2.1/?apikey=194695cd-fc73-44c3-bff9-920773fdc959&lang=ru_RU'
 
@@ -55,7 +55,7 @@ function loadScript() {
       check()
       return
     }
-    const callbackName = `ymapsOnload_${mapId}`
+    const callbackName = 'ymapsOnload_arsenal'
     window[callbackName] = (ymaps) => {
       delete window[callbackName]
       createMap(ymaps)
