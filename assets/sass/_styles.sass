@@ -48,13 +48,96 @@ a
 	margin-top: var(--gapSection)
 	//background: url('../images/bg2.svg') no-repeat 50%/cover
 	z-index: 1
+	&_inner
+		padding-top: var(--gapSection)
+		padding-bottom: var(--gapSection)
+		background: $grad
+		background-repeat: no-repeat
+		h1
+			margin-bottom: var(--gapSection)
+		h2
+			margin-top: var(--gap4)
+			margin-bottom: $gap2
+			font-size: 1.5rem
+			font-weight: 600
+		h3
+			margin-top: $gap4
+			margin-bottom: $gap2
+			font-size: 1.25rem
+			font-weight: 600
+		p
+			margin-bottom: $gap3
+			max-width: 600px
+		ul
+			margin: $gap2 0
+			padding-left: 1.5em
+		.btn-bd
+			margin-top: $gap4
+	&_faq
+		margin-top: 0
+		padding-top: var(--gapSection)
+		padding-bottom: var(--gapSection)
+		background: $grad
+		background-repeat: no-repeat
+	&_contacts
+		margin-top: 0
+		padding-top: var(--gapSection)
+		padding-bottom: 0
+		background: $grad
+		background-repeat: no-repeat
+	&_form
+		margin-top: 0
+		padding-top: var(--gapSection)
+		padding-bottom: var(--gapSection)
+		background: $grad
+		background-repeat: no-repeat
+	&_company
+		margin-top: 0
+		padding-top: var(--gapSection)
+		padding-bottom: var(--gapSection)
+		background: $grad
+		background-repeat: no-repeat
 	&_services, &_about
 		margin: 0
 		padding-top: var(--gapSection)
 		padding-bottom: var(--gapSection)
 		background: $grad
 		background-repeat: no-repeat
-
+	&_map
+		margin-bottom: 0
+		padding-bottom: 0
+	&_inner--flush
+		padding-bottom: 0
+.page-inner
+	max-width: 720px
+.page-lead
+	font-size: 1.125rem
+	line-height: 1.5
+	color: $dark
+	margin-bottom: $gap4 !important
+.page-block
+	margin-bottom: $gap4
+.contacts-block
+	display: flex
+	flex-direction: column
+	gap: $gap2
+	margin: $gap4 0
+	a
+		font-size: 1.25rem
+		font-weight: 600
+		color: $main
+		text-decoration: none
+		transition: $trs
+		&:hover
+			text-decoration: underline
+.price-list
+	list-style: none !important
+	padding-left: 0 !important
+	li
+		padding: $gap1 0
+		border-bottom: 1px solid rgba($main, 0.1)
+		&:last-child
+			border-bottom: none
 
 .cards
 	display: grid

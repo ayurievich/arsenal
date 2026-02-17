@@ -3,7 +3,7 @@
   <Hero />
   <Services />
   <HowWorks />
-  <About />
+  <FormSection />
   <Map/>
   <Footer />
   <slot />
@@ -14,6 +14,6 @@ import Footer from "~/components/footer.vue";
 import Hero from "~/components/home/hero.vue";
 import Services from "~/components/home/services.vue";
 import HowWorks from "~/components/home/how-works.vue";
-import About from "~/components/home/about.vue";
+import FormSection from "~/components/home/form-section.vue";
 import Map from "~/components/home/map.vue";
 </script>

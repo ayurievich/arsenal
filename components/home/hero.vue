@@ -7,16 +7,10 @@
             <h1>
               {{ hero.title }}
             </h1>
-            <p>
-              {{hero.subtitle}}
-            </p>
           </hgroup>
-          <a class="btn-bd" href="#about">
-            {{hero.buttonText}}
-          </a>
         </div>
         <div>
-          <img class="hero-img" :src="img" alt="Logo" />
+          <img class="hero-img" :src="img" alt="Остекление окон и балконов в Красноярске" />
         </div>
       </div>
     </div>

@@ -7,15 +7,21 @@
 </template>
 
 <script setup lang="ts">
+const siteUrl = "https://okna-arsenal24.ru";
+
 useSeoMeta({
-  title: "Окна Арсенал",
-  ogTitle: "Окна Арсенал",
-  description: "Мы объединились для того, чтобы в домах наших Клиентов был солнечный свет, тепло и уют",
-  ogDescription: "Мы объединились для того, чтобы в домах наших Клиентов был солнечный свет, тепло и уют",
+  title: "Остекление окон и балконов в Красноярске под ключ | Окна Арсенал",
+  ogTitle: "Остекление окон и балконов в Красноярске под ключ | Окна Арсенал",
+  description: "Установка окон ПВХ и остекление балконов в Красноярске. Профили Montblanc. Бесплатный замер, монтаж за 1 день. Гарантия 15 лет. ☎ +7 (962) 072-76-34",
+  ogDescription: "Установка окон ПВХ и остекление балконов в Красноярске. Профили Montblanc. Бесплатный замер, монтаж за 1 день. Гарантия 15 лет. ☎ +7 (962) 072-76-34",
+  ogImage: "https://okna-arsenal24.ru/og-image.jpg",
+  ogType: "website",
+  ogUrl: "https://okna-arsenal24.ru/",
 });
 
 useHead({
   link: [
+    { rel: "canonical", href: siteUrl + "/" },
     { rel: 'icon', type: 'image/png', href: 'fav/favicon.svg' },
     {
       rel: 'apple-touch-icon',
@@ -40,27 +46,30 @@ useHead({
       async: true,
       type: "application/ld+json",
       children: JSON.stringify({
-        "@context": "http://schema.org/",
-        "@type": "Organization",
-        name: "XFR",
-        brand: "XFR",
-        alternateName: "XFR",
+        "@context": "https://schema.org",
+        "@type": ["Organization", "LocalBusiness"],
+        url: "https://okna-arsenal24.ru",
+        name: "Окна Арсенал",
+        brand: { "@type": "Brand", name: "Окна Арсенал" },
+        alternateName: "Арсенал",
         address: {
           "@type": "PostalAddress",
           streetAddress: "Затонская улица, 44/2",
           addressLocality: "Красноярск",
-          addressCountry: "Россия",
+          addressCountry: "RU",
         },
-        contactPoint: [
-          {
-            "@type": "ContactPoint",
-            telephone: "+7 (962) 072-76-34",
-            email: "yuri6464@mail.ru",
-            contactType: "customer support",
-            areaServed: "RUS",
-            availableLanguage: ["Russia"],
-          },
-        ],
+        telephone: "+7 (962) 072-76-34",
+        email: "yuri6464@mail.ru",
+        openingHours: "Mo-Fr 09:00-18:00",
+        priceRange: "₽₽",
+        contactPoint: {
+          "@type": "ContactPoint",
+          telephone: "+7 (962) 072-76-34",
+          email: "yuri6464@mail.ru",
+          contactType: "customer service",
+          areaServed: "RU",
+          availableLanguage: "Russian",
+        },
       }),
     },
     {
