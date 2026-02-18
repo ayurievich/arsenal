@@ -38,8 +38,8 @@ useHead({
   meta: [
     { name: "msapplication-TileColor", content: "#003770" },
     { name: "theme-color", content: "#003770" },
-    { name: 'yandex-verification', content: '75c81ffbf6bdaf5a' },
-    { name: 'google-site-verification', content: 'QsaXa9mWSZR-JS0YveM1-CAgy1g1PlryMEGEeczJnsc' }
+    { name: 'yandex-verification', content: 'e3e0b37628743bf6' },
+    { name: 'google-site-verification', content: '1mrNL2rElb5zsXDdQW5m5ss0uPxBxkYvpE17LnqS5hc' }
   ],
   script: [
     {
