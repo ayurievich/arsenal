@@ -1,5 +1,0 @@
-User-agent: *
-Disallow: /bot.php
-Allow: /
-
-Sitemap: https://okna-arsenal24.ru/sitemap.xml

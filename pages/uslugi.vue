@@ -1,116 +1,180 @@
 <template>
-  <section class="section section_inner section_services">
+  <section class="page">
     <div class="container">
-      <div class="uslugi-hero">
-        <h1>Услуги</h1>
-      </div>
+      <AppBreadcrumbs :items="[{ label: 'Главная', to: '/' }, { label: 'Услуги' }]" />
+      <p class="page__label">Услуги</p>
+      <h1>Услуги по остеклению в Красноярске</h1>
+      <p class="page__lead">
+        Остекление квартир, балконов, домов и объектов. Подберём профиль Montblanc и рассчитаем стоимость на бесплатном замере.
+      </p>
 
-      <div class="uslugi-grid">
-        <article
+      <ul class="service-list">
+        <li
           v-for="(item, i) in services"
-          :key="i"
-          class="uslugi-card"
+          :id="item.id"
+          :key="item.id"
+          class="service-list__item"
         >
-          <div class="uslugi-card__icon">
-            <LucideIcon :name="item.icon" :size="48" />
+          <span class="service-list__num">0{{ i + 1 }}</span>
+          <div class="service-list__body">
+            <h2>{{ item.title }}</h2>
+            <p>{{ item.desc }}</p>
           </div>
-          <h3>{{ item.title }}</h3>
-          <p v-if="item.desc">{{ item.desc }}</p>
-          <a v-if="item.href" class="btn-bd uslugi-card__btn" :href="item.href">{{ item.buttonText || 'Рассчитать стоимость' }}</a>
-        </article>
+        </li>
+      </ul>
+
+      <div class="page__cta">
+        <AppButton href="/#form" variant="primary">Бесплатный замер</AppButton>
+        <AppButton to="/contacts" variant="secondary">Контакты</AppButton>
       </div>
     </div>
   </section>
 </template>
 
 <script setup lang="ts">
-definePageMeta({ layout: "inner" });
-
-const siteUrl = "https://okna-arsenal24.ru";
-
-useSeoMeta({
+usePageSeo({
   title: "Услуги по остеклению в Красноярске | Окна Арсенал",
   description:
     "Остекление квартир, балконов, домов, коттеджей и производств. Окна с ламинацией. Профили Montblanc. Бесплатный замер. ☎ +7 (962) 072-76-34",
-  ogUrl: siteUrl + "/uslugi",
-  ogImage: siteUrl + "/og-image.jpg",
+  path: "/uslugi",
 });
-useHead({ link: [{ rel: "canonical", href: siteUrl + "/uslugi" }] });
+
+const siteUrl = useSiteUrl();
+if (siteUrl) {
+  useHead({
+    script: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
+          itemListElement: [
+            { "@type": "ListItem", position: 1, name: "Главная", item: absoluteUrl("/") },
+            { "@type": "ListItem", position: 2, name: "Услуги", item: absoluteUrl("/uslugi") },
+          ],
+        }),
+      },
+    ],
+  });
+}
 
 const services = [
-  { title: "Квартиры и балконы", desc: "Пластиковые окна ПВХ, тёплое и холодное остекление балконов и лоджий, замена старых окон.", icon: "Building2" },
-  { title: "Частные дома", desc: "Панорамные окна, остекление террас и веранд.", icon: "Home" },
-  { title: "Двери ПВХ", desc: "Изготовление и установка пластиковых дверей под ключ.", icon: "DoorOpen" },
-  { title: "Ламинация", desc: "Окна и двери с ламинацией в любой цвет и текстуру.", icon: "Palette" },
-  { title: "Производства", desc: "Остекление цехов, складов, офисов и торговых площадей.", icon: "Factory" },
-  { title: "Бесплатный замер", desc: "", icon: "Ruler", href: "/#about", buttonText: "Записаться" },
+  {
+    id: "kvartiry",
+    title: "Квартиры и балконы",
+    desc: "Пластиковые окна ПВХ, тёплое и холодное остекление балконов и лоджий, замена старых окон.",
+  },
+  {
+    id: "doma",
+    title: "Частные дома",
+    desc: "Панорамные окна, остекление террас и веранд.",
+  },
+  {
+    id: "dveri",
+    title: "Двери ПВХ",
+    desc: "Изготовление и установка пластиковых дверей под ключ.",
+  },
+  {
+    id: "laminaciya",
+    title: "Ламинация",
+    desc: "Окна и двери с ламинацией в цвет и текстуру под ваш интерьер.",
+  },
+  {
+    id: "proizvodstva",
+    title: "Производства",
+    desc: "Остекление цехов, складов, офисов и торговых площадей.",
+  },
+  {
+    id: "zamer",
+    title: "Бесплатный замер",
+    desc: "Выезд замерщика, размеры и предварительная смета без оплаты.",
+  },
 ];
 </script>
 
 <style scoped lang="scss">
-.uslugi-hero {
-  text-align: center;
-  max-width: 640px;
-  margin: 0 auto var(--gapSection);
+.page {
+  padding: 32px 0 64px;
+  background: var(--color-bg);
 }
 
-.uslugi-grid {
+.container {
+  max-width: var(--container);
+  margin: 0 auto;
+  padding: 0 var(--container-pad);
+}
+
+.page__label {
+  margin: 0 0 8px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-warm);
+}
+
+h1 {
+  margin: 0 0 12px;
+  font-size: clamp(1.75rem, 3.5vw, 2.6rem);
+  line-height: 1.1;
+  color: var(--color-ink);
+}
+
+.page__lead {
+  margin: 0 0 32px;
+  max-width: 52ch;
+  color: var(--color-text-muted);
+  line-height: 1.55;
+  font-size: 1.0625rem;
+}
+
+.service-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid var(--color-border);
+}
+
+.service-list__item {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: var(--gap4);
+  grid-template-columns: 64px 1fr;
+  gap: 16px;
+  padding: 24px 0;
+  border-bottom: 1px solid var(--color-border);
+  scroll-margin-top: calc(var(--header-h) + 16px);
 
-  @media (max-width: 900px) {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  @media (max-width: 600px) {
-    grid-template-columns: 1fr;
+  @media (max-width: 560px) {
+    grid-template-columns: 44px 1fr;
   }
 }
 
-.uslugi-card {
+.service-list__num {
+  font-family: var(--font-display);
+  font-size: 0.875rem;
+  color: var(--color-warm);
+  padding-top: 4px;
+}
+
+.service-list__body h2 {
+  margin: 0 0 6px;
+  font-family: var(--font-display);
+  font-size: clamp(1.15rem, 2vw, 1.4rem);
+  font-weight: 600;
+  color: var(--color-ink);
+  text-transform: none;
+}
+
+.service-list__body p {
+  margin: 0;
+  color: var(--color-text-muted);
+  line-height: 1.5;
+  max-width: 58ch;
+}
+
+.page__cta {
   display: flex;
-  flex-direction: column;
-  background: rgba(255, 255, 255, 0.9);
-  border: 2px solid rgba(0, 55, 112, 0.12);
-  border-radius: 12px;
-  padding: var(--gap4);
-  transition: all 0.25s ease;
-
-  &:hover {
-    border-color: rgba(0, 55, 112, 0.35);
-    transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba(0, 55, 112, 0.1);
-  }
-
-  &__icon {
-    width: 48px;
-    height: 48px;
-    margin-bottom: var(--gap2);
-
-    :deep(svg) {
-      width: 100%;
-      height: 100%;
-    }
-  }
-
-  h3 {
-    font-size: 1.25rem;
-    font-weight: 600;
-    margin: 0 0 var(--gap1);
-    color: #16111a;
-  }
-
-  p {
-    margin: 0 0 var(--gap2);
-    font-size: 0.9375rem;
-    line-height: 1.5;
-    color: #3d4654;
-  }
-
-  &__btn {
-    margin-top: auto;
-    align-self: center;
-  }
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 32px;
 }
 </style>

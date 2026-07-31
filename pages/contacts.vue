@@ -1,34 +1,32 @@
 <template>
-  <section class="section section_contacts">
+  <section class="page">
     <div class="container">
-      <h1 class="contacts-title">Контакты</h1>
+      <AppBreadcrumbs :items="[{ label: 'Главная', to: '/' }, { label: 'Контакты' }]" />
+      <p class="page__label">Контакты</p>
+      <h1>Контакты</h1>
+      <p class="page__lead">Свяжитесь с нами удобным способом или оставьте заявку на бесплатный замер.</p>
 
-      <div class="contacts-grid">
-        <a href="tel:+79620727634" class="contacts-card">
-          <div class="contacts-card__icon">
-            <LucideIcon name="Phone" :size="40" />
-          </div>
-          <h3 class="contacts-card__title">Телефон</h3>
-          <span class="contacts-card__value">+7 (962) 072-76-34</span>
+      <div class="contacts-panel">
+        <a :href="`tel:${SITE.phoneTel}`" class="contacts-row">
+          <span class="contacts-row__label">Телефон</span>
+          <span class="contacts-row__value">{{ SITE.phoneDisplay }}</span>
         </a>
-        <a href="mailto:yuri6464@mail.ru" class="contacts-card">
-          <div class="contacts-card__icon">
-            <LucideIcon name="Mail" :size="40" />
-          </div>
-          <h3 class="contacts-card__title">Email</h3>
-          <span class="contacts-card__value">yuri6464@mail.ru</span>
+        <a :href="`mailto:${SITE.email}`" class="contacts-row">
+          <span class="contacts-row__label">Email</span>
+          <span class="contacts-row__value">{{ SITE.email }}</span>
         </a>
-        <div class="contacts-card contacts-card--static">
-          <div class="contacts-card__icon">
-            <LucideIcon name="MapPin" :size="40" />
-          </div>
-          <h3 class="contacts-card__title">Адрес</h3>
-          <span class="contacts-card__value">Красноярск, Затонская улица, 44/2</span>
+        <div class="contacts-row contacts-row--static">
+          <span class="contacts-row__label">Адрес</span>
+          <span class="contacts-row__value">{{ SITE.address }}</span>
+        </div>
+        <div class="contacts-row contacts-row--static">
+          <span class="contacts-row__label">Режим работы</span>
+          <span class="contacts-row__value">{{ SITE.hours }}</span>
         </div>
       </div>
 
-      <div class="contacts-cta">
-        <a class="btn-bd" href="/#about">Оставить заявку</a>
+      <div class="page__cta">
+        <AppButton href="/#form" variant="primary">Оставить заявку</AppButton>
       </div>
     </div>
     <Map />
@@ -37,97 +35,118 @@
 
 <script setup lang="ts">
 import Map from "~/components/home/map.vue";
+import { SITE } from "~/data/site";
+import { trackEvent } from "~/utils/analytics";
 
-definePageMeta({ layout: "inner" });
+onMounted(() => trackEvent("contacts_view"));
 
-const siteUrl = "https://okna-arsenal24.ru";
-
-useSeoMeta({
+usePageSeo({
   title: "Контакты | Окна Арсенал — Красноярск",
-  description:
-    "Адрес, телефон, email. Красноярск, Затонская 44/2. ☎ +7 (962) 072-76-34",
-  ogUrl: siteUrl + "/contacts",
-  ogImage: siteUrl + "/og-image.jpg",
+  description: "Адрес, телефон, email. Красноярск, Затонская 44/2. ☎ +7 (962) 072-76-34",
+  path: "/contacts",
 });
-useHead({ link: [{ rel: "canonical", href: siteUrl + "/contacts" }] });
+
+const siteUrl = useSiteUrl();
+if (siteUrl) {
+  useHead({
+    script: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
+          itemListElement: [
+            { "@type": "ListItem", position: 1, name: "Главная", item: absoluteUrl("/") },
+            { "@type": "ListItem", position: 2, name: "Контакты", item: absoluteUrl("/contacts") },
+          ],
+        }),
+      },
+    ],
+  });
+}
 </script>
 
 <style scoped lang="scss">
-.contacts-title {
-  text-align: center;
-  margin-bottom: var(--gapSection);
+.page {
+  padding: 32px 0 0;
+  background: var(--color-bg);
 }
 
-.contacts-grid {
+.container {
+  max-width: var(--container);
+  margin: 0 auto;
+  padding: 0 var(--container-pad) 28px;
+}
+
+.page__label {
+  margin: 0 0 8px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-warm);
+}
+
+h1 {
+  margin: 0 0 12px;
+  font-size: clamp(1.75rem, 3.5vw, 2.6rem);
+  line-height: 1.1;
+  color: var(--color-ink);
+}
+
+.page__lead {
+  margin: 0 0 28px;
+  color: var(--color-text-muted);
+  max-width: 48ch;
+  line-height: 1.55;
+}
+
+.contacts-panel {
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+}
+
+.contacts-row {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: var(--gap4);
-  margin-bottom: var(--gapSection);
-
-  @media (max-width: 900px) {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  @media (max-width: 600px) {
-    grid-template-columns: 1fr;
-  }
-}
-
-.contacts-card {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  padding: var(--gap4);
-  background: rgba(255, 255, 255, 0.9);
-  border: 2px solid rgba(0, 55, 112, 0.12);
-  border-radius: 12px;
+  grid-template-columns: 160px 1fr;
+  gap: 16px;
+  align-items: baseline;
+  padding: 18px 22px;
+  border-bottom: 1px solid var(--color-border);
   text-decoration: none;
   color: inherit;
-  transition: all 0.25s ease;
 
-  &:hover:not(.contacts-card--static) {
-    border-color: rgba(0, 55, 112, 0.35);
-    transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba(0, 55, 112, 0.1);
-
-    .contacts-card__value {
-      color: #003770;
-    }
+  &:last-child {
+    border-bottom: 0;
   }
 
-  &--static {
-    cursor: default;
+  &:hover:not(.contacts-row--static) .contacts-row__value {
+    color: var(--color-accent);
   }
 
-  &__icon {
-    width: 56px;
-    height: 56px;
-    margin-bottom: var(--gap2);
-
-    :deep(svg) {
-      width: 100%;
-      height: 100%;
-    }
-  }
-
-  &__title {
-    font-size: 1rem;
-    font-weight: 600;
-    margin: 0 0 var(--gap1);
-    color: #16111a;
-    text-transform: uppercase;
-  }
-
-  &__value {
-    font-size: 1rem;
-    line-height: 1.5;
-    color: #3d4654;
-    transition: color 0.2s ease;
+  @media (max-width: 640px) {
+    grid-template-columns: 1fr;
+    gap: 4px;
   }
 }
 
-.contacts-cta {
-  text-align: center;
+.contacts-row__label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-warm);
+}
+
+.contacts-row__value {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--color-ink);
+  word-break: break-word;
+}
+
+.page__cta {
+  margin-top: 24px;
 }
 </style>

@@ -1,53 +1,32 @@
 .btn
 	+flex(inline-flex, center, center, nowrap)
-	height: 54px
-	min-width: 200px
-	padding: 8px 2em
-	border-radius: 16pc
-	border: 2px solid $main
-	+theme(main)
+	min-height: 52px
+	min-width: 148px
+	padding: 14px 22px
+	border-radius: var(--radius-sm)
+	border: 1.5px solid var(--color-accent)
+	background-color: var(--color-accent)
+	color: $white
 	text-align: center
-	+ft(18, 18, 500)
-	transition: $trs
+	font-family: var(--font-sans)
+	font-size: 0.9375rem
+	font-weight: 600
+	letter-spacing: 0.01em
+	transition: background-color var(--motion-base) ease, border-color var(--motion-base) ease, color var(--motion-base) ease, transform var(--motion-fast) ease
 	cursor: pointer
-	&[disabled]
+	text-decoration: none
+	&[disabled], &[aria-disabled="true"]
 		opacity: 0.5
-	&:hover, &:active, &:focus
-		background-color: darken($main, 10%)
+		cursor: not-allowed
+		pointer-events: none
+	&:hover, &:active
+		background-color: var(--color-accent-hover)
+		border-color: var(--color-accent-hover)
 		color: $white
-		outline: none
-		box-shadow: none
 	&-bd
 		@extend .btn
-		min-width: 150px
-		height: 50px
-		border: 2px solid $main
 		background-color: transparent
-		color: $main	
-		cursor: pointer
-		&:hover, &:active, &:focus
-			+theme(main)
-
-
-.form
-	max-width: 500px
-	margin-left: auto
-	margin-right: auto
-	padding: $gap4
-	+theme(white)
-	border-radius: $brs2
-	text-align: center
-	label
-		display: block
-		margin-bottom: 4px
-		text-align: left
-	input
-		width: 100%
-		padding: 12px $gap2
-		border-radius: 16pc
-		border: 2px solid $main
-	&-row
-		margin-bottom: $gap2
-
-			
-
+		color: var(--color-accent)
+		&:hover, &:active
+			background-color: var(--color-accent)
+			color: $white

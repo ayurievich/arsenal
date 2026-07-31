@@ -1,137 +1,182 @@
 <template>
-  <footer class="footer">
-    <div class="footer-main">
-      <div class="container footer-row">
-        <div class="footer-left">
-          <div class="footer-brand">
-            <span class="footer-logo">Окна Арсенал</span>
-            <span class="footer-tagline">Остекление окон и балконов в Красноярске</span>
-          </div>
-        </div>
-        <div class="footer-right">
-          <a href="tel:+79620727634" class="footer-link">
-            <LucideIcon name="Phone" :size="18" />
-            +7 (962) 072-76-34
-          </a>
-          <a href="mailto:yuri6464@mail.ru" class="footer-link">
-            <LucideIcon name="Mail" :size="18" />
-            yuri6464@mail.ru
-          </a>
-          <span class="footer-address">
-            <LucideIcon name="MapPin" :size="18" />
-            Красноярск, Затонская ул., 44/2
-          </span>
-        </div>
+  <footer class="site-footer">
+    <div class="container site-footer__top">
+      <div class="site-footer__brand">
+        <p class="site-footer__name">Окна Арсенал</p>
+        <p class="site-footer__desc">
+          Остекление окон и балконов в Красноярске под ключ. Профили Montblanc, своё производство.
+        </p>
+      </div>
+      <a class="site-footer__phone" :href="`tel:${SITE.phoneTel}`">{{ SITE.phoneDisplay }}</a>
+    </div>
+
+    <div class="container site-footer__grid">
+      <div>
+        <p class="site-footer__title">Разделы</p>
+        <ul class="site-footer__list">
+          <li v-for="item in NAV" :key="item.to">
+            <NuxtLink :to="item.to">{{ item.label }}</NuxtLink>
+          </li>
+        </ul>
+      </div>
+
+      <div>
+        <p class="site-footer__title">Контакты</p>
+        <ul class="site-footer__list">
+          <li>
+            <a :href="`mailto:${SITE.email}`">{{ SITE.email }}</a>
+          </li>
+          <li>{{ SITE.addressShort }}</li>
+          <li>{{ SITE.hours }}</li>
+        </ul>
+      </div>
+
+      <div>
+        <p class="site-footer__title">Мы на картах</p>
+        <ul class="site-footer__list">
+          <li>
+            <a href="https://yandex.ru/maps/org/arsenal/170560753128/" target="_blank" rel="noopener noreferrer">
+              Яндекс Карты
+            </a>
+          </li>
+          <li>
+            <a href="https://2gis.ru/krasnoyarsk/firm/70000001096841792" target="_blank" rel="noopener noreferrer">
+              2ГИС
+            </a>
+          </li>
+        </ul>
       </div>
     </div>
-    <div class="footer-bottom">
-      <p class="footer-copy">© 2025 Арсенал</p>
+
+    <div class="container site-footer__bottom">
+      <p>© {{ year }} Окна Арсенал</p>
+      <div class="site-footer__legal">
+        <NuxtLink to="/privacy">Политика конфиденциальности</NuxtLink>
+        <NuxtLink to="/cookies">Файлы cookie</NuxtLink>
+      </div>
     </div>
   </footer>
 </template>
 
+<script setup lang="ts">
+import { NAV, SITE } from "~/data/site";
+
+const year = new Date().getFullYear();
+</script>
+
 <style scoped lang="scss">
-.footer {
-  background: #003770;
-  color: white;
-
-  :deep(svg) {
-    color: white;
-    stroke: white;
-  }
+.site-footer {
+  margin-top: 0;
+  background: #071820;
+  color: #fff;
+  padding: var(--gap6) 0 var(--gap3);
 }
 
-.footer-main {
-  padding: var(--gap3) var(--gap3) var(--gap2);
-
-  .container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 var(--gap3);
-  }
+.container {
+  max-width: var(--container);
+  margin: 0 auto;
+  padding: 0 var(--container-pad);
 }
 
-.footer-row {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  align-items: start;
-  gap: var(--gap4);
-
-  @media (max-width: 768px) {
-    grid-template-columns: 1fr;
-    gap: var(--gap3);
-  }
-}
-
-.footer-left {
+.site-footer__top {
   display: flex;
   flex-wrap: wrap;
-  align-items: center;
-  gap: var(--gap2) var(--gap3);
+  justify-content: space-between;
+  gap: 24px;
+  align-items: end;
+  padding-bottom: var(--gap4);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  margin-bottom: var(--gap4);
 }
 
-.footer-brand {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-
-  .footer-logo {
-    font-size: 1.125rem;
-    font-weight: 700;
-    letter-spacing: 0.02em;
-  }
-
-  .footer-tagline {
-    font-size: 0.8125rem;
-    opacity: 0.85;
-  }
+.site-footer__name {
+  margin: 0 0 10px;
+  font-family: var(--font-display);
+  font-size: clamp(1.6rem, 3vw, 2.2rem);
+  font-weight: 600;
+  letter-spacing: -0.02em;
 }
 
-.footer-right {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: var(--gap1);
-  padding: 0;
+.site-footer__desc {
   margin: 0;
-  align-self: start;
-
-  @media (max-width: 768px) {
-    align-items: flex-start;
-  }
+  font-size: 0.975rem;
+  line-height: 1.5;
+  opacity: 0.78;
+  max-width: 36ch;
 }
 
-.footer-link,
-.footer-address {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--gap1);
-  font-size: 0.9375rem;
-}
-
-.footer-link {
-  color: inherit;
+.site-footer__phone {
+  color: #fff;
+  font-family: var(--font-display);
+  font-size: clamp(1.2rem, 2vw, 1.6rem);
+  font-weight: 600;
   text-decoration: none;
-  opacity: 0.95;
+}
 
-  &:hover {
-    opacity: 1;
+.site-footer__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--gap4);
+
+  @media (max-width: 700px) {
+    grid-template-columns: 1fr;
   }
 }
 
-.footer-address {
-  opacity: 0.9;
-}
-
-.footer-bottom {
-  padding: var(--gap2) var(--gap3);
-  border-top: 1px solid rgba(255, 255, 255, 0.15);
-  text-align: center;
-}
-
-.footer-copy {
-  margin: 0;
+.site-footer__title {
+  margin: 0 0 14px;
   font-size: 0.75rem;
-  opacity: 0.8;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  opacity: 0.55;
+}
+
+.site-footer__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  font-size: 0.975rem;
+
+  a {
+    color: inherit;
+    text-decoration: none;
+    opacity: 0.9;
+
+    &:hover {
+      opacity: 1;
+      color: var(--color-accent-soft);
+    }
+  }
+}
+
+.site-footer__bottom {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: var(--gap5);
+  padding-top: var(--gap3);
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  font-size: 0.8125rem;
+  opacity: 0.7;
+
+  p {
+    margin: 0;
+  }
+}
+
+.site-footer__legal {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+
+  a {
+    color: inherit;
+    text-decoration: underline;
+  }
 }
 </style>

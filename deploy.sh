@@ -4,7 +4,7 @@
 # Или: SSHPASS=пароль ./deploy.sh
 
 set -e
-HOST="83.166.245.126"
+HOST="194.67.119.121"
 USER="root"
 REPO="https://github.com/ayurievich/arsenal.git"
 PROJECT_DIR="/var/www/arsenal"
@@ -28,6 +28,14 @@ export SSHPASS="$PASS"
 echo "==> Подключение к $HOST..."
 # Копируем nginx-конфиг на сервер для использования после git pull
 sshpass -e scp -o StrictHostKeyChecking=no nginx-arsenal.conf "$USER@$HOST":/tmp/arsenal-nginx.conf
+
+# Секреты не в git: синхронизируем локальный .env на сервер, если он есть
+if [ -f .env ]; then
+  echo "==> Копирование .env на сервер..."
+  sshpass -e scp -o StrictHostKeyChecking=no .env "$USER@$HOST":/tmp/arsenal.env
+else
+  echo "==> Локальный .env не найден — на сервере должен уже лежать /var/www/arsenal/.env"
+fi
 
 sshpass -e ssh -o StrictHostKeyChecking=no "$USER@$HOST" bash -s << REMOTE
 set -e
@@ -61,6 +69,20 @@ else
   cd "$PROJECT_DIR"
 fi
 
+if [ -f /tmp/arsenal.env ]; then
+  echo "==> Установка .env..."
+  mv /tmp/arsenal.env "$PROJECT_DIR/.env"
+  chmod 600 "$PROJECT_DIR/.env"
+fi
+
+if [ ! -f "$PROJECT_DIR/.env" ]; then
+  echo "ERROR: нет $PROJECT_DIR/.env — Telegram-токен не будет работать"
+  exit 1
+fi
+
+echo "==> Env keys on server:"
+grep -E '^[A-Z0-9_]+=' "$PROJECT_DIR/.env" | sed 's/=.*/=***/'
+
 echo "==> Установка зависимостей и сборка..."
 npm install
 rm -rf .output .nuxt node_modules/.cache node_modules/.vite
@@ -68,7 +90,7 @@ npm run build
 
 echo "==> Перезапуск приложения..."
 pm2 delete arsenal 2>/dev/null || true
-pm2 start node --name arsenal -- .output/server/index.mjs
+pm2 start ecosystem.config.cjs
 pm2 startup 2>/dev/null || true
 pm2 save
 

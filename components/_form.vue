@@ -1,36 +1,45 @@
 <template>
   <form class="contact-form" action="/" method="POST" noValidate @submit.prevent="formSend">
-    <div class="contact-form__field">
-      <label for="name">Имя</label>
-      <input
-        v-model="form.name"
-        type="text"
-        required
-        name="name"
-        id="name"
-        placeholder="Как к вам обращаться?"
-        class="contact-form__input"
-      />
+    <div class="contact-form__row">
+      <div class="contact-form__field">
+        <label for="name">Имя</label>
+        <input
+          v-model="form.name"
+          type="text"
+          required
+          name="name"
+          id="name"
+          autocomplete="name"
+          placeholder="Как к вам обращаться?"
+          class="contact-form__input"
+          :disabled="loading"
+          @input="markStart"
+        />
+      </div>
+      <div class="contact-form__field">
+        <label for="tel">Телефон</label>
+        <input
+          ref="phoneInputRef"
+          :value="phoneDisplay"
+          type="tel"
+          required
+          name="tel"
+          id="tel"
+          placeholder="+7 (000) 000-00-00"
+          :class="['contact-form__input', { 'contact-form__input--error': phoneError }]"
+          maxlength="18"
+          autocomplete="tel"
+          inputmode="numeric"
+          :aria-invalid="phoneError ? 'true' : 'false'"
+          :aria-describedby="phoneError ? 'tel-error' : undefined"
+          :disabled="loading"
+          @input="onPhoneInput"
+          @blur="validatePhone"
+        />
+        <span v-if="phoneError" id="tel-error" class="contact-form__error" role="alert">{{ phoneError }}</span>
+      </div>
     </div>
-    <div class="contact-form__field">
-      <label for="tel">Телефон</label>
-      <input
-        ref="phoneInputRef"
-        :value="phoneDisplay"
-        type="tel"
-        required
-        name="tel"
-        id="tel"
-        placeholder="+7 (000) 000-00-00"
-        :class="['contact-form__input', { 'contact-form__input--error': phoneError }]"
-        maxlength="18"
-        autocomplete="tel"
-        inputmode="numeric"
-        @input="onPhoneInput"
-        @blur="validatePhone"
-      />
-      <span v-if="phoneError" class="contact-form__error">{{ phoneError }}</span>
-    </div>
+
     <div class="contact-form__field">
       <label for="message">Комментарий</label>
       <textarea
@@ -38,18 +47,23 @@
         name="message"
         id="message"
         rows="3"
-        placeholder="Опишите задачу или задайте вопрос"
+        placeholder="Адрес объекта, тип остекления или вопрос"
         class="contact-form__input contact-form__textarea"
+        :disabled="loading"
+        @input="markStart"
       />
     </div>
+
     <button
       type="submit"
-      class="contact-form__btn btn"
-      :disabled="!isFormValid"
+      class="contact-form__btn"
+      :disabled="!isFormValid || loading"
+      :aria-busy="loading"
     >
-      Отправить заявку
+      {{ loading ? "Отправляем…" : "Отправить заявку" }}
     </button>
-    <p v-if="alert" class="contact-form__alert">
+
+    <p v-if="alert" class="contact-form__alert" role="status" aria-live="polite">
       {{ alert }}
     </p>
   </form>
@@ -57,6 +71,7 @@
 
 <script setup>
 import { reactive, ref, computed, nextTick } from "vue";
+import { trackEvent } from "~/utils/analytics";
 
 function formatRuPhone(digits) {
   if (!digits) return "";
@@ -81,6 +96,14 @@ const form = reactive({
 const alert = ref("");
 const phoneError = ref("");
 const phoneInputRef = ref(null);
+const loading = ref(false);
+const started = ref(false);
+
+function markStart() {
+  if (started.value) return;
+  started.value = true;
+  trackEvent("form_start");
+}
 
 function isValidRussianPhone(value) {
   const digits = value.replace(/\D/g, "");
@@ -92,6 +115,7 @@ function isValidRussianPhone(value) {
 const phoneDisplay = computed(() => formatRuPhone(form.phone));
 
 function onPhoneInput(e) {
+  markStart();
   const raw = e.target.value;
   const digits = raw.replace(/\D/g, "").replace(/^[78]/, "").slice(0, 10);
   form.phone = digits;
@@ -128,10 +152,13 @@ const isFormValid = computed(() => {
 });
 
 const formSend = async () => {
+  if (loading.value) return;
   if (!validatePhone()) return;
+  loading.value = true;
+  alert.value = "";
   try {
-    await $fetch('/bot.php', {
-      method: 'POST',
+    await $fetch("/bot.php", {
+      method: "POST",
       body: {
         name: form.name,
         phone: formatRuPhone(form.phone),
@@ -140,75 +167,87 @@ const formSend = async () => {
     });
 
     alert.value = "Спасибо! Мы скоро перезвоним";
+    trackEvent("form_success");
     form.name = "";
     form.phone = "";
     form.message = "";
+    started.value = false;
   } catch (error) {
     alert.value = "Ошибка отправки. Позвоните нам: +7 (962) 072-76-34";
-    console.error('Ошибка при отправке формы:', error);
+    trackEvent("form_error");
+    console.error("Ошибка при отправке формы:", error);
+  } finally {
+    loading.value = false;
   }
 };
 </script>
 
 <style lang="scss" scoped>
 .contact-form {
-  background: #fff;
-  padding: var(--gap4);
-  border-radius: 16px;
-  border: 2px solid rgba(0, 55, 112, 0.12);
-  box-shadow: 0 4px 20px rgba(0, 55, 112, 0.08);
-  transition: box-shadow 0.25s ease, border-color 0.25s ease;
+  background: transparent;
+  padding: 0;
+}
 
-  &:hover {
-    border-color: rgba(0, 55, 112, 0.2);
-    box-shadow: 0 8px 28px rgba(0, 55, 112, 0.12);
+.contact-form__row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+
+  @media (max-width: 560px) {
+    grid-template-columns: 1fr;
   }
 }
 
 .contact-form__field {
-  margin-bottom: var(--gap3);
+  margin-bottom: 14px;
 
   label {
     display: block;
-    font-size: 0.875rem;
+    font-size: 0.8125rem;
     font-weight: 600;
-    color: #16111a;
-    margin-bottom: var(--gap1);
+    color: var(--color-ink);
+    margin-bottom: 8px;
   }
 }
 
 .contact-form__input {
   width: 100%;
-  padding: 14px 18px;
+  padding: 13px 14px;
   font-size: 1rem;
   font-family: inherit;
-  color: #16111a;
-  background: #f8fafc;
-  border: 2px solid rgba(0, 55, 112, 0.1);
-  border-radius: 12px;
-  transition: border-color 0.2s ease, background 0.2s ease;
+  color: var(--color-ink);
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  transition: border-color var(--motion-fast) ease, background var(--motion-fast) ease;
 
   &::placeholder {
-    color: #94a3b8;
+    color: #8a94a0;
   }
 
-  &:hover {
-    border-color: rgba(0, 55, 112, 0.2);
+  &:hover:not(:disabled) {
+    border-color: rgba(11, 61, 92, 0.35);
   }
 
   &:focus {
     outline: none;
-    border-color: #003770;
+    border-color: var(--color-accent);
     background: #fff;
   }
 
-  &--error {
-    border-color: #dc2626;
-    background: #fef2f2;
+  &:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
 
-    &:focus {
-      border-color: #dc2626;
-    }
+  &--error {
+    border-color: var(--color-error);
+    background: #fef2f2;
+  }
+
+  &:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
   }
 }
 
@@ -216,21 +255,30 @@ const formSend = async () => {
   display: block;
   margin-top: 6px;
   font-size: 0.8125rem;
-  color: #dc2626;
+  color: var(--color-error);
 }
 
 .contact-form__textarea {
   resize: vertical;
-  min-height: 80px;
+  min-height: 96px;
 }
 
 .contact-form__btn {
   width: 100%;
-  margin-top: var(--gap2);
-  padding: 16px 24px;
-  font-size: 1rem;
-  font-weight: 600;
+  margin-top: 4px;
+  min-height: 52px;
+  border: 1.5px solid var(--color-accent);
+  border-radius: var(--radius-sm);
+  background: var(--color-accent);
+  color: #fff;
+  font: 700 0.975rem/1.2 var(--font-sans);
   cursor: pointer;
+  transition: background-color var(--motion-fast) ease, border-color var(--motion-fast) ease;
+
+  &:hover:not([disabled]) {
+    background: var(--color-accent-hover);
+    border-color: var(--color-accent-hover);
+  }
 
   &[disabled] {
     opacity: 0.5;
@@ -239,9 +287,9 @@ const formSend = async () => {
 }
 
 .contact-form__alert {
-  margin: var(--gap2) 0 0;
+  margin: 14px 0 0;
   font-size: 0.9375rem;
-  color: #003770;
+  color: var(--color-accent);
   text-align: center;
 }
 </style>

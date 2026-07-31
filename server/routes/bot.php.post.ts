@@ -1,13 +1,34 @@
-const BOT_TOKEN = "7654862177:AAGCmGtrQMxanhALFq_a4oaQhIwN_0kT0Jo";
-const CHAT_ID = "-1002493657391";
+type FormBody = {
+  name?: string;
+  phone?: string;
+  message?: string;
+};
 
 export default defineEventHandler(async (e) => {
-  const body = await readBody<{ name?: string; phone?: string; message?: string }>(e).catch(
-    () => ({})
-  );
-  const name = String(body?.name ?? "").trim();
-  const phone = String(body?.phone ?? "").trim();
-  const message = String(body?.message ?? "").trim();
+  const config = useRuntimeConfig();
+  const token = String(config.telegramBotToken || "").trim();
+  const chatId = String(config.telegramChatId || "").trim();
+
+  if (!token || !chatId) {
+    setResponseStatus(e, 503);
+    return {
+      status: "error",
+      message: "Сервис заявок временно недоступен.",
+    };
+  }
+
+  const body = (await readBody<FormBody>(e).catch(() => ({}))) as FormBody;
+  const name = String(body.name ?? "").trim();
+  const phone = String(body.phone ?? "").trim();
+  const message = String(body.message ?? "").trim();
+
+  if (!name || !phone) {
+    setResponseStatus(e, 400);
+    return {
+      status: "error",
+      message: "Укажите имя и телефон.",
+    };
+  }
 
   const text =
     "Новое сообщение с сайта:\nИмя: " +
@@ -19,14 +40,14 @@ export default defineEventHandler(async (e) => {
 
   const url =
     "https://api.telegram.org/bot" +
-    BOT_TOKEN +
+    token +
     "/sendMessage?chat_id=" +
-    CHAT_ID +
+    encodeURIComponent(chatId) +
     "&text=" +
     encodeURIComponent(text);
 
   try {
-    const res = await $fetch(url);
+    await $fetch(url);
     return {
       status: "success",
       message: "Спасибо за ваше сообщение! Мы скоро с вами свяжемся.",

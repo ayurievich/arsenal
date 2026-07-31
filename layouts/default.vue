@@ -1,19 +1,26 @@
 <template>
+  <a href="#main-content" class="skip-link">К содержимому</a>
   <Header />
-  <Hero />
-  <Services />
-  <HowWorks />
-  <FormSection />
-  <Map/>
+  <main id="main-content" class="site-main" :class="{ 'site-main--inner': !isHome }">
+    <slot />
+  </main>
   <Footer />
-  <slot />
 </template>
+
 <script setup lang="ts">
 import Header from "~/components/header.vue";
 import Footer from "~/components/footer.vue";
-import Hero from "~/components/home/hero.vue";
-import Services from "~/components/home/services.vue";
-import HowWorks from "~/components/home/how-works.vue";
-import FormSection from "~/components/home/form-section.vue";
-import Map from "~/components/home/map.vue";
+
+const route = useRoute();
+const isHome = computed(() => route.path === "/");
 </script>
+
+<style scoped>
+.site-main {
+  min-height: 50vh;
+}
+
+.site-main--inner {
+  padding-top: var(--header-h);
+}
+</style>

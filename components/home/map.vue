@@ -1,83 +1,100 @@
 <template>
   <section class="section section_map">
-    <hgroup class="text-center">
-      <h2>
-        Наше производство
-      </h2>
-    </hgroup>
-    <div :id="mapId" style="width: 100%; height: 400px"></div>
+    <div class="container">
+      <p class="map-label">Производство</p>
+      <h2>Где мы находимся</h2>
+      <p class="map-lead">
+        {{ SITE.address }}. Приезжайте или вызовите замерщика на объект.
+      </p>
+    </div>
+    <div class="map-frame-wrap">
+      <iframe
+        class="map-frame"
+        title="Карта производства Окна Арсенал"
+        :src="mapEmbedUrl"
+        loading="lazy"
+        referrerpolicy="no-referrer-when-downgrade"
+        allowfullscreen
+      />
+    </div>
+    <div class="container map-actions">
+      <a class="map-link" :href="mapOpenUrl" target="_blank" rel="noopener noreferrer">
+        Открыть в Яндекс.Картах
+      </a>
+    </div>
   </section>
 </template>
 
-<script setup>
-import { onMounted } from 'vue'
+<script setup lang="ts">
+import { SITE } from "~/data/site";
 
-const mapId = 'ymap-arsenal'
-
-const YANDEX_MAPS_BASE = 'https://api-maps.yandex.ru/2.1/?apikey=194695cd-fc73-44c3-bff9-920773fdc959&lang=ru_RU'
-
-function createMap(ymaps) {
-  const container = document.getElementById(mapId)
-  if (!container || container.dataset.initialized) return
-  container.dataset.initialized = '1'
-
-  ymaps.ready(() => {
-    const map = new ymaps.Map(mapId, {
-      center: [55.978684, 92.937534],
-      zoom: 16,
-      controls: ['zoomControl', 'fullscreenControl'],
-      theme: 'dark',
-    })
-    const placemark = new ymaps.Placemark(
-      [55.978684, 92.937534],
-      { hintContent: 'Наше производство', balloonContent: 'Мы находимся здесь!' },
-      { preset: 'islands#icon', iconColor: 'blue' }
-    )
-    map.geoObjects.add(placemark)
-  })
-}
-
-function loadScript() {
-  return new Promise((resolve) => {
-    if (typeof ymaps !== 'undefined') {
-      createMap(ymaps)
-      return
-    }
-    const existing = document.querySelector('script[src*="api-maps.yandex.ru"]')
-    if (existing) {
-      const check = () => {
-        if (typeof ymaps !== 'undefined') {
-          createMap(ymaps)
-          return
-        }
-        setTimeout(check, 50)
-      }
-      check()
-      return
-    }
-    const callbackName = 'ymapsOnload_arsenal'
-    window[callbackName] = (ymaps) => {
-      delete window[callbackName]
-      createMap(ymaps)
-    }
-    const script = document.createElement('script')
-    script.src = `${YANDEX_MAPS_BASE}&onload=${callbackName}`
-    script.type = 'text/javascript'
-    script.async = true
-    script.onerror = () => delete window[callbackName]
-    document.head.appendChild(script)
-  })
-}
-
-onMounted(() => {
-  if (process.client) {
-    loadScript()
-  }
-})
+const [lat, lon] = SITE.mapCoords;
+const mapEmbedUrl = `https://yandex.ru/map-widget/v1/?ll=${lon}%2C${lat}&z=16&pt=${lon},${lat},pm2dbl&l=map`;
+const mapOpenUrl = `https://yandex.ru/maps/?ll=${lon}%2C${lat}&z=16&pt=${lon},${lat}`;
 </script>
 
 <style scoped>
 .section_map {
   margin-bottom: 0;
+  padding-top: var(--gapSection);
+  background: var(--color-bg);
+}
+
+.container {
+  max-width: var(--container);
+  margin: 0 auto;
+  padding: 0 var(--container-pad) var(--gap3);
+}
+
+.map-label {
+  margin: 0 0 10px;
+  text-align: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-warm);
+}
+
+h2 {
+  margin: 0 0 8px;
+  text-align: center;
+  font-size: clamp(2rem, 4vw, 3rem);
+}
+
+.map-lead {
+  margin: 0;
+  text-align: center;
+  color: var(--color-text-muted);
+}
+
+.map-frame-wrap {
+  width: 100%;
+  height: 420px;
+  background: var(--color-bg-muted);
+  overflow: hidden;
+}
+
+.map-frame {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.map-actions {
+  padding-top: var(--gap2);
+  padding-bottom: var(--gap4);
+  text-align: center;
+}
+
+.map-link {
+  color: var(--color-accent);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.map-link:hover {
+  color: var(--color-warm);
 }
 </style>

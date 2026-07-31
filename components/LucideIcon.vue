@@ -2,7 +2,7 @@
   <component
     :is="iconComponent"
     :size="size"
-    color="#003770"
+    color="#0b3d5c"
     :stroke-width="2"
   />
 </template>
