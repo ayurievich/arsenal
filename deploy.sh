@@ -62,7 +62,12 @@ fi
 mkdir -p /var/www
 if [ -d "$PROJECT_DIR/.git" ]; then
   echo "==> Обновление репозитория..."
-  cd "$PROJECT_DIR" && git pull
+  cd "$PROJECT_DIR"
+  git fetch origin
+  # Прод-дерево часто грязное после прошлых правок — жёстко синхронизируем с main,
+  # .env сохраняем (он в gitignore и не должен пропасть).
+  git reset --hard origin/main
+  git clean -fd -e .env -e .output -e node_modules
 else
   echo "==> Клонирование репозитория..."
   git clone "$REPO" "$PROJECT_DIR"
